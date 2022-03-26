@@ -1,28 +1,46 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Logger;
 
 use Psr\Log\AbstractLogger;
+use Stringable;
 
-class Logger extends AbstractLogger {
-  public function log($level, \Stringable|string $message, array $context = []): void
-  {
-    if (!empty($context)) {
-      $message = $this->convertContext($message, $context);
-    }
-    $fileName = _LOG_PATH.DIRECTORY_SEPARATOR.$level.'.txt';
-    $stream = fopen($fileName, 'a');
-    fwrite($stream, $message."\n");
-    fclose($stream);
-  }
+use function fclose;
+use function fopen;
+use function fwrite;
+use function is_array;
+use function is_object;
+use function method_exists;
+use function str_replace;
 
-  public function convertContext($message, $context)
-  {
-    foreach ($context as $key => $value)
+use const DIRECTORY_SEPARATOR;
+
+class Logger extends AbstractLogger
+{
+    /**
+     * @param mixed $level
+     * @param string|Stringable $message
+     */
+    public function log($level, string|Stringable $message, array $context = []) : void
     {
-      if (!is_array($value) && (!is_object($value) || method_exists($value, '__toString'))) {
-        $message = str_replace('{'.$key.'}',$value, $message);
-      }
+        if (! empty($context)) {
+            $message = $this->convertContext($message, $context);
+        }
+        $fileName = _LOG_PATH . DIRECTORY_SEPARATOR . $level . '.txt';
+        $stream = fopen($fileName, 'a');
+        fwrite($stream, $message . "\n");
+        fclose($stream);
     }
-    return $message;
-  }
+
+    public function convertContext(string|Stringable $message, array $context) : string
+    {
+        foreach ($context as $key => $value) {
+            if (! is_array($value) && (! is_object($value) || method_exists($value, '__toString'))) {
+                $message = str_replace('{' . $key . '}', $value, $message);
+            }
+        }
+        return $message;
+    }
 }

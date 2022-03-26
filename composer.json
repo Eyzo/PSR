@@ -5,7 +5,12 @@
         "cocur/slugify": "^4.1",
         "guzzlehttp/psr7": "^2.2",
         "http-interop/response-sender": "^1.0",
-        "psr/container": "^2.0"
+        "psr/container": "^2.0",
+        "symfony/web-link": "^6.0",
+        "psr/event-dispatcher": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "psr/http-server-handler": "^1.0",
+        "guzzlehttp/guzzle": "^7.4"
     },
     "autoload": {
         "psr-4": {
